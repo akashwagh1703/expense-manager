@@ -10,7 +10,7 @@ import 'animate.css';
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement, PointElement, LineElement);
 
 const Home = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const pieData = {
     labels: ["Groceries", "Bills", "Entertainment", "Miscellaneous"],

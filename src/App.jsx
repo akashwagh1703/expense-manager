@@ -9,7 +9,7 @@ import Register from "./pages/auth/Register";
 import FarmerSettingsPage from "./pages/settings/FarmerSettingsPage";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   return (
     <>
       {isAuthenticated ? (<Router>
