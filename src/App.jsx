@@ -1,3 +1,4 @@
+// make some new design and attractive desing
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
@@ -7,6 +8,7 @@ import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Register from "./pages/auth/Register";
 import FarmerSettingsPage from "./pages/settings/FarmerSettingsPage";
+import CategoryPage from "./pages/CategoryPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -19,6 +21,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/add" element={<AddExpenseIncomePage />} />
+              <Route path="/category" element={<CategoryPage />} />
               <Route path="/settings" element={<FarmerSettingsPage />} />
             </Routes>
           </div>
