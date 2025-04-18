@@ -1,0 +1,1 @@
+export const BASEURL = 'http://localhost/expense-manager-api/public';
