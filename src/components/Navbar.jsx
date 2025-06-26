@@ -2,13 +2,21 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaChartBar, FaCog, FaHome, FaUserCircle } from "react-icons/fa";
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { useUser } from "../context/UserContext";
 
 const Navbar = () => {
-    // Simulating user data (Can be replaced with props or context API)
-    const [user, setUser] = useState({
-        name: "John Doe",
-        avatar: "user.png", // Replace with a default avatar if needed
-    });
+    const { user, setUser } = useUser();
+
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+    };
+
+    if (!user) return null; // Hide navbar if not logged in
+
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-white p-2 shadow-sm">
@@ -53,11 +61,11 @@ const Navbar = () => {
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                 >
-                                    <FaUserCircle className="me-2" /> User
+                                    <FaUserCircle className="me-2" /> {user?.name}
                                 </button>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="#">Profile</a></li>
-                                    <li><a className="dropdown-item" href="#">Logout</a></li>
+                                    <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
+                                    <li><button className="dropdown-item" onClick={logout}>Logout</button></li>
                                 </ul>
                             </div>
                         </li>

@@ -1,24 +1,63 @@
-import React, { useState } from "react";
-import { FaUser, FaBell, FaSlidersH, FaPalette, FaLock, FaLanguage, FaCloudSun, FaTractor } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaUser, FaBell, FaSlidersH } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "animate.css";
+import { useUser } from "../../context/UserContext";
 
 const FarmerSettingsPage = () => {
+    const { user } = useUser();
     const [activeTab, setActiveTab] = useState("profile");
     const [settings, setSettings] = useState({
-        name: "Ramesh Yadav",
-        phone: "9876543210",
-        village: "Shivpura",
-        language: "Hindi",
-        theme: "Light",
-        smsNotifications: true,
-        appNotifications: true,
-        darkMode: false,
-        password: "",
-        cropType: "Wheat",
-        farmSize: "2 acres",
-        weatherAlerts: true,
+        name: "",
+        phone: "",
+        village: "",
+        language: "",
+        theme: "",
+        smsNotifications: null,
+        appNotifications: null,
+        darkMode: null,
+        cropType: "",
+        farmSize: "",
+        weatherAlerts: null,
     });
+    const [notification, setNotification] = useState(""); // State for notification message
+    const token = localStorage.getItem('token'); // Replace this with the actual token
+
+    // Fetch the settings when the page loads
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
+    const fetchSettings = async () => {
+        try {
+            const response = await fetch('http://localhost/expense-manager-api/public/farmer/get-settings', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data.success) {
+                const formData = {
+                    name: data.data.name,
+                    phone: data.data.phone,
+                    village: data.data.village,
+                    language: data.data.language,
+                    theme: data.data.theme,
+                    smsNotifications: data.data.sms_notifications,
+                    appNotifications: data.data.app_notifications,
+                    darkMode: data.data.dark_mode,
+                    cropType: data.data.crop_type,
+                    farmSize: data.data.farm_size,
+                    weatherAlerts: data.data.weather_alerts,
+                }
+                setSettings(formData);
+            }
+        } catch (error) {
+            console.error('Error fetching settings:', error);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -28,8 +67,29 @@ const FarmerSettingsPage = () => {
         }));
     };
 
-    const handleSave = () => {
-        alert("Settings saved!");
+    const handleSave = async () => {
+        try {
+            const response = await fetch('http://localhost/expense-manager-api/public/farmer/save-settings', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(settings),
+            });
+            const data = await response.json();
+            if (data.success) {
+                setNotification("Settings saved!"); // Show notification
+                setTimeout(() => setNotification(""), 3000); // Hide notification after 3 seconds
+            } else {
+                setNotification("Failed to save settings!"); // Show failure message
+                setTimeout(() => setNotification(""), 3000); // Hide notification after 3 seconds
+            }
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            setNotification("Error saving settings!"); // Show error message
+            setTimeout(() => setNotification(""), 3000); // Hide notification after 3 seconds
+        }
     };
 
     const renderTabContent = () => {
@@ -41,7 +101,6 @@ const FarmerSettingsPage = () => {
                         <Input label="Name" name="name" value={settings.name} onChange={handleChange} />
                         <Input label="Phone" name="phone" value={settings.phone} onChange={handleChange} />
                         <Input label="Village" name="village" value={settings.village} onChange={handleChange} />
-                        <Input label="Password" name="password" value={settings.password} onChange={handleChange} type="password" />
                     </>
                 );
             case "preferences":
@@ -76,6 +135,13 @@ const FarmerSettingsPage = () => {
                 <p className="text-muted">Customize your experience and stay updated with latest farming tools</p>
             </div>
 
+            {/* Display Notification */}
+            {notification && (
+                <div className="alert alert-success" role="alert">
+                    {notification}
+                </div>
+            )}
+
             <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
                 <TabButton icon={<FaUser />} label="Profile" active={activeTab === "profile"} onClick={() => setActiveTab("profile")} />
                 <TabButton icon={<FaSlidersH />} label="Preferences" active={activeTab === "preferences"} onClick={() => setActiveTab("preferences")} />
@@ -84,7 +150,7 @@ const FarmerSettingsPage = () => {
 
             <div className="card shadow-lg p-4 animate__animated animate__fadeIn rounded-4 border-0 bg-light">
                 {renderTabContent()}
-                <button className="btn btn-success mt-4 w-100 rounded-pill fw-bold py-2">Save Settings</button>
+                <button className="btn btn-success mt-4 w-100 rounded-pill fw-bold py-2" onClick={handleSave}>Save Settings</button>
             </div>
         </div>
     );

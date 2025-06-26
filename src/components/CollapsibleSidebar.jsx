@@ -1,6 +1,5 @@
-// now create a page that user can add their own expenses and income on clicking the add button on the navbar
 import React, { useState } from "react";
-import { FaPlus, FaArrowLeft, FaChartPie, FaWallet, FaClipboardList, FaArrowRight } from "react-icons/fa";
+import { FaPlus, FaArrowLeft, FaChartPie, FaWallet, FaClipboardList, FaArrowRight, FaTags, FaTag } from "react-icons/fa";
 import { motion } from "framer-motion"; // Import Framer Motion for animations
 import { Link } from "react-router-dom";
 
@@ -65,12 +64,12 @@ const CollapsibleSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         className="mb-3"
                     >
-                        <button
-                            className="btn btn-success d-flex align-items-center justify-content-center p-2"
+
+                        <Link to={'/category'} className="btn btn-success d-flex align-items-center justify-content-center p-2"
                             style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                         >
-                            <FaChartPie style={{ fontSize: "20px", color: "#fff" }} />
-                        </button>
+                            <FaTag style={{ fontSize: "20px", color: "#fff" }} />
+                        </Link>
                     </motion.div>
 
                     <motion.div
