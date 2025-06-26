@@ -1,0 +1,55 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+     - main
+     - development
+
+env: 
+  CI: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 22
+
+      - name: Install dependancies
+        uses: bahmutov/npm-install@v1
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload production-ready bild files
+        uses: action/upload-artifact@v2
+        with:
+          name: production-files
+          path: ./build
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/development'
+    
+    steps: 
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production-files
+          path: ./build
+
+      - name: Deploy to github pages
+        uses: peaceirs/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          publish_dir: ./build
